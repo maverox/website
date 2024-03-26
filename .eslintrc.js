@@ -16,6 +16,8 @@ module.exports = {
     'plugin:react-hooks/recommended',
     'plugin:@next/next/recommended',
     'plugin:prettier/recommended',
+    'plugin:testing-library/react',
+    'plugin:jest-dom/recommended',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
