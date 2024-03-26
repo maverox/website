@@ -25,9 +25,9 @@ const DocLink = ({
   return (
     <Link
       href={uri}
-      className={classnames('text-sm block border-l-2 py-1 pl-2', {
+      className={classnames('text-sm block py-1 pl-2', {
         '  font-medium': !isActive,
-        'text-primary dark:text-[#007bff] text-bold border-l-primary  font-semibold':
+        'text-primary dark:text-[#007bff] text-bold border-l-2 border-l-primary  font-semibold':
           isActive,
       })}
     >
@@ -52,9 +52,10 @@ const DocLinkBlank = ({
   return (
     <Link
       href={uri}
-      className={classnames('text-sm block border-l-2 py-1 pl-2', {
+      className={classnames('text-sm block  py-1 pl-2', {
         '  font-medium': !isActive,
-        'text-primary text-bold border-l-primary font-semibold': isActive,
+        'text-primary text-bold border-l-2 border-l-primary font-semibold':
+          isActive,
       })}
       target='_blank'
       rel='noopener noreferrer'
@@ -130,6 +131,15 @@ export const SidebarLayout = ({ children }: { children: React.ReactNode }) => {
   const handleRotate = () => setRotateChevron(!rotateChevron);
   const rotate = rotateChevron ? 'rotate(180deg)' : 'rotate(0)';
   const pathWtihoutFragment = extractPathWithoutFragment(router.asPath);
+  useEffect(() => {
+    if (window) {
+      window.addEventListener('resize', () => {
+        if (window.innerWidth > 1024) {
+          setOpen(false);
+        }
+      });
+    }
+  }, [typeof window !== 'undefined']);
   return (
     <div className='max-w-[1400px] mx-auto flex flex-col items-center'>
       <section>
@@ -189,7 +199,7 @@ export const SidebarLayout = ({ children }: { children: React.ReactNode }) => {
           </div>
         </div>
 
-        <div className='dark:bg-slate-800 max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-4 mx-4 md:mx-12'>
+        <div className='dark:bg-slate-800 max-w-[1400px] grid grid-cols-1 lg:grid-cols-4 mx-4 md:mx-12'>
           <div className='hidden lg:block mt-24'>
             <DocsNav />
             <CarbonAds
@@ -249,7 +259,28 @@ export const DocsNav = () => {
   const rotateG = active.getStarted ? 'rotate(180deg)' : 'rotate(0)';
   const rotateR = active.getReference ? 'rotate(180deg)' : 'rotate(0)';
   const rotateSpec = active.getSpecification ? 'rotate(180deg)' : 'rotate(0)';
+
   const { theme } = useTheme();
+
+  const [learn_icon, setLearn_icon] = useState('');
+  const [reference_icon, setReference_icon] = useState('');
+  const [spec_icon, setSpec_icon] = useState('');
+  const [overview_icon, setOverview_icon] = useState('');
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      setOverview_icon('/icons/eye-dark.svg');
+      setLearn_icon('/icons/compass-dark.svg');
+      setReference_icon('/icons/book-dark.svg');
+      setSpec_icon('/icons/clipboard-dark.svg');
+    } else {
+      setOverview_icon('/icons/eye.svg');
+      setLearn_icon('/icons/compass.svg');
+      setReference_icon('/icons/book.svg');
+      setSpec_icon('/icons/clipboard.svg');
+    }
+  }, [theme]);
+
   return (
     <div id='sidebar ' className='lg:mt-8 w-4/5 mx-auto lg:ml-4'>
       <div className='mb-2 bg-slate-200 dark:bg-slate-900 p-2 rounded'>
@@ -258,11 +289,7 @@ export const DocsNav = () => {
           onClick={handleClickDoc}
         >
           <div className='flex  items-center align-middle'>
-            <img
-              src={`${theme === 'dark' ? '/icons/eye-dark.svg' : '/icons/eye.svg'}`}
-              alt='eye icon'
-              className='mr-2'
-            />
+            <img src={`${overview_icon}`} alt='eye icon' className='mr-2' />
             <SegmentHeadline label='Overview' />
           </div>
           <svg
@@ -306,11 +333,7 @@ export const DocsNav = () => {
           onClick={handleClickGet}
         >
           <div className='flex  items-center align-middle'>
-            <img
-              src={`${theme === 'dark' ? '/icons/compass-dark.svg' : '/icons/compass.svg'}`}
-              alt='eye icon'
-              className='mr-2'
-            />
+            <img src={`${learn_icon}`} alt='eye icon' className='mr-2' />
             <SegmentHeadline label='Getting Started' />
           </div>
           <svg
@@ -357,11 +380,7 @@ export const DocsNav = () => {
           onClick={handleClickReference}
         >
           <div className='flex  items-center align-middle'>
-            <img
-              src={`${theme === 'dark' ? '/icons/book-dark.svg' : '/icons/book.svg'}`}
-              alt='eye icon'
-              className='mr-2'
-            />
+            <img src={`${reference_icon}`} alt='eye icon' className='mr-2' />
             <SegmentHeadline label='Reference' />
           </div>
           <svg
@@ -507,11 +526,7 @@ export const DocsNav = () => {
           onClick={handleClickSpec}
         >
           <div className='flex  items-center align-middle'>
-            <img
-              src={`${theme === 'dark' ? '/icons/clipboard-dark.svg' : '/icons/clipboard.svg'}   `}
-              alt='eye icon'
-              className='mr-2'
-            />
+            <img src={`${spec_icon}`} alt='eye icon' className='mr-2' />
             <SegmentHeadline label='Specification' />
           </div>
           <svg
@@ -537,6 +552,7 @@ export const DocsNav = () => {
           id='specification'
         >
           <DocLink uri='/specification' label='Overview' />
+          <DocLink uri='/specification-links' label='Specification Links' />
           <DocLink uri='/draft/2020-12/release-notes' label='2020-12 notes' />
           <DocLink uri='/draft/2019-09/release-notes' label='2019-09 notes' />
           <DocLink
@@ -563,7 +579,6 @@ export const DocsNav = () => {
               label='draft-06 notes'
             />
           </div>
-          <DocLink uri='/specification-links' label='Specification Links' />
         </div>
       </div>
     </div>
